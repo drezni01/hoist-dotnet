@@ -116,7 +116,7 @@ namespace Hoist.Tests.Contract
         [TestMethod]
         public async Task TestJwtAuthRequiresSigningKey()
         {
-            var ex = await Assert.ThrowsExceptionAsync<HoistException>(() => StartHostAsync(s =>
+            var ex = await Assert.ThrowsExactlyAsync<HoistException>(() => StartHostAsync(s =>
             {
                 s.AddHoist(o => HoistTestHost.ApplyTestOptions(o, null));
                 s.AddHoistJwtAuth(jwt => { });
@@ -154,7 +154,7 @@ namespace Hoist.Tests.Contract
         [TestMethod]
         public async Task TestStartupRequiresAuthProvider()
         {
-            var ex = await Assert.ThrowsExceptionAsync<HoistException>(() =>
+            var ex = await Assert.ThrowsExactlyAsync<HoistException>(() =>
                 StartHostAsync(s => s.AddHoist(o => HoistTestHost.ApplyTestOptions(o, null))));
             StringAssert.Contains(ex.Message, "AddHoistJwtAuth");
         }
@@ -330,7 +330,7 @@ namespace Hoist.Tests.Contract
             await using var host = await HoistTestHost.StartAsync(app);
 
             // The TestServer rethrows unhandled exceptions to the caller; a real server answers 500.
-            var ex = await Assert.ThrowsExceptionAsync<HoistException>(() => host.Client.GetAsync("xh/version"));
+            var ex = await Assert.ThrowsExactlyAsync<HoistException>(() => host.Client.GetAsync("xh/version"));
             StringAssert.Contains(ex.Message, "UseHoist");
         }
 

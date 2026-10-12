@@ -60,7 +60,7 @@ namespace Hoist.Tests.Schema
             Assert.AreEqual(1, ca.Version);
 
             cb.Value = "Europe/Paris";
-            await Assert.ThrowsExceptionAsync<DbUpdateConcurrencyException>(() => b.SaveChangesAsync());
+            await Assert.ThrowsExactlyAsync<DbUpdateConcurrencyException>(() => b.SaveChangesAsync());
         }
 
         [TestMethod]

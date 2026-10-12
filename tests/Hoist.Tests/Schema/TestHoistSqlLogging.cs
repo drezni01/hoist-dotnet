@@ -27,7 +27,7 @@ namespace Hoist.Tests.Schema
 
             await using var ctx = await ts.Get<IDbContextFactory<HoistDbContext>>().CreateDbContextAsync();
             if (sql == null) await ctx.Configs.AsNoTracking().ToListAsync();
-            else await Assert.ThrowsExceptionAsync<Microsoft.Data.Sqlite.SqliteException>(() => ctx.Database.ExecuteSqlRawAsync(sql));
+            else await Assert.ThrowsExactlyAsync<Microsoft.Data.Sqlite.SqliteException>(() => ctx.Database.ExecuteSqlRawAsync(sql));
             return capture.Entries.ToList();
         }
 

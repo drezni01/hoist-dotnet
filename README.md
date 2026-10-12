@@ -1,6 +1,6 @@
 # HoistDotnet
 
-HoistDotnet is a .NET 8 implementation of the parts of the [hoist-core](https://github.com/xh/hoist-core) server that [hoist-react](https://github.com/xh/hoist-react) apps need to run. It is a library that a .NET host app adds to its own services and pipeline, so you no longer need a separate Grails/JVM deployment.
+HoistDotnet is a .NET 10 implementation of the parts of the [hoist-core](https://github.com/xh/hoist-core) server that [hoist-react](https://github.com/xh/hoist-react) apps need to run. It is a library that a .NET host app adds to its own services and pipeline, so you no longer need a separate Grails/JVM deployment.
 
 ```csharp
 builder.Services.AddHoist(o => config.GetSection("Hoist").Bind(o));

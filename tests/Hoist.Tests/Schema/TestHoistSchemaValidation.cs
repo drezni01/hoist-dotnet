@@ -27,7 +27,7 @@ namespace Hoist.Tests.Schema
             using var ts = await TestServices.CreateAsync();
             Execute(ts.Options.Database.ConnectionString, "ALTER TABLE xh_config DROP COLUMN note");
 
-            var ex = await Assert.ThrowsExceptionAsync<HoistSchemaException>(() => ts.Get<IHoistSchema>().EnsureSchemaAsync());
+            var ex = await Assert.ThrowsExactlyAsync<HoistSchemaException>(() => ts.Get<IHoistSchema>().EnsureSchemaAsync());
             StringAssert.Contains(ex.Message, "xh_config.note");
         }
 
@@ -39,7 +39,7 @@ namespace Hoist.Tests.Schema
 
             var problems = await ts.Get<IHoistSchema>().FindProblemsAsync();
             CollectionAssert.Contains(problems.ToList(), "missing table xh_track_log");
-            await Assert.ThrowsExceptionAsync<HoistSchemaException>(() => ts.Get<IHoistSchema>().EnsureSchemaAsync());
+            await Assert.ThrowsExactlyAsync<HoistSchemaException>(() => ts.Get<IHoistSchema>().EnsureSchemaAsync());
         }
 
         [TestMethod]
@@ -61,7 +61,7 @@ namespace Hoist.Tests.Schema
             keepAlive.Open();
             Execute(keepAlive, "CREATE TABLE xh_config (id INTEGER PRIMARY KEY, name TEXT)");
 
-            var ex = await Assert.ThrowsExceptionAsync<HoistSchemaException>(() =>
+            var ex = await Assert.ThrowsExactlyAsync<HoistSchemaException>(() =>
                 HoistTestHost.StartAsync(o => o.Database.ConnectionString = cs));
             StringAssert.Contains(ex.Message, "missing table xh_preference");
             StringAssert.Contains(ex.Message, "xh_config.value");
