@@ -1,0 +1,256 @@
+# HoistDotnet port manifest
+#
+# Maps each ported area of hoist-core (and the hoist-react code that calls it) to the .NET code,
+# tests and docs that implement it. The hoist-core-sync skill (.claude/skills/hoist-core-sync)
+# diffs hoist-core between `hoistCore.commit` and a new release, intersects the changed files with
+# `hoistCoreSources` below, and reports which components need attention.
+#
+# Paths:   hoistCoreSources  - relative to the hoist-core repo root (../hoist-core)
+#          hoistReactSources - relative to the @xh/hoist package root
+#          dotnet/tests/docs - relative to this repo root
+# Status:  ported | stubbed | skipped | planned
+
+hoistCore:
+  version: 42.1.0
+  commit: d10db96
+  repo: ../hoist-core
+hoistReact:
+  version: 88.1.1
+  # Use an installed copy of this version (node_modules/@xh/hoist) as the client spec.
+  # Its local path is machine-specific: see CLAUDE.local.md.
+  minHoistCoreVersion: 40.5.0
+
+# Files whose changes affect every component (conventions, routing, rendering, errors).
+shared:
+  hoistCoreSources:
+    - grails-app/controllers/io/xh/hoist/UrlMappings.groovy
+    - grails-app/controllers/io/xh/hoist/BaseController.groovy
+    - src/main/groovy/io/xh/hoist/json/**
+    - src/main/groovy/io/xh/hoist/exception/**
+    - grails-app/init/io/xh/hoist/BootStrap.groovy          # built-in configs and prefs
+    - docs/upgrade-notes/**
+  hoistReactSources:
+    - svc/FetchService.ts
+    - core/XH.ts                                           # MIN_HOIST_CORE_VERSION
+    - appcontainer/AppContainerModel.ts                    # startup sequence
+  dotnet:
+    - src/Hoist.Api/Controllers/BaseController.cs
+    - src/Hoist.Api/Json/HoistJson.cs
+    - src/Hoist.Api/Middleware/HoistExceptionMiddleware.cs
+    - src/Hoist.Api/Hosting/**
+    - src/Hoist.Core/Exceptions/**
+  tests: [tests/Hoist.Tests/Contract/TestHoistHosting.cs]
+  docs: [docs/api/core.md, docs/decisions/0004-hoist-in-host-pipeline.md, docs/decisions/0005-initialize-on-host-start.md]
+
+components:
+  core:
+    status: ported
+    stage: 0
+    endpoints: [xh/ping, /ping, xh/version, xh/notFound]
+    hoistCoreSources:
+      - grails-app/controllers/io/xh/hoist/impl/XhController.groovy   # ping, version, notFound
+    dotnet: [src/Hoist.Api/Controllers/XhController.cs]
+    tests: [tests/Hoist.Tests/Contract/TestCoreEndpoints.cs]
+    docs: [docs/api/core.md]
+
+  database:
+    status: ported
+    stage: 1
+    hoistCoreSources:
+      - grails-app/domain/io/xh/hoist/**
+      - grails-app/conf/application.groovy
+      - src/main/groovy/io/xh/hoist/configuration/ApplicationConfig.groovy
+    dotnet: [src/Hoist.Infra/Database/**, src/Hoist.Core/Models/**]
+    tests: [tests/Hoist.Tests/Schema/**, tests/Hoist.Tests/LiveDb/**]
+    docs: [docs/schema/README.md, docs/decisions/0002-hoist-schema.md, docs/decisions/0003-validate-schema-at-startup.md]
+
+  config:
+    status: ported
+    stage: 1
+    endpoints: [xh/getConfig]
+    dotnet:
+      - src/Hoist.Core/Services/ConfigService.cs
+      - src/Hoist.Core/Configuration/TypedConfigRegistry.cs
+      - src/Hoist.Core/Configuration/BuiltIn/hoist-builtins.json   # built-in configs, prefs, typed classes
+      - src/Hoist.Infra/Configuration/InstanceConfig.cs
+      - src/Hoist.Infra/Security/JasyptEncryptor.cs
+      - src/Hoist.Infra/Database/ConfigRepository.cs
+    tests: [tests/Hoist.Tests/Unit/TestConfigService.cs, tests/Hoist.Tests/Unit/TestTypedConfig.cs, tests/Hoist.Tests/Unit/TestJasyptEncryptor.cs, tests/Hoist.Tests/Contract/TestConfigEndpoints.cs]
+    hoistCoreSources:
+      - grails-app/services/io/xh/hoist/config/ConfigService.groovy
+      - grails-app/domain/io/xh/hoist/config/AppConfig.groovy
+      - src/main/groovy/io/xh/hoist/config/**
+      - src/main/groovy/io/xh/hoist/util/InstanceConfigUtils.groovy
+      - src/main/groovy/io/xh/hoist/**/*Config.groovy                 # TypedConfigMap subclasses -> hoist-builtins.json
+    hoistReactSources: [svc/ConfigService.ts]
+    docs: [docs/api/config.md]
+
+  auth:
+    status: ported
+    stage: 2
+    endpoints: [xh/authStatus, xh/login, xh/logout, xh/authConfig, xh/getIdentity]
+    dotnet:
+      - src/Hoist.Api/Middleware/HoistAuthMiddleware.cs
+      - src/Hoist.Api/Security/**
+      - src/Hoist.Core/Services/IdentityService.cs
+      - src/Hoist.Core/Services/DefaultUserService.cs
+      - src/Hoist.Core/Models/HoistUser.cs
+      - src/Hoist.Core/Interfaces/UserInterfaces.cs
+      - src/Hoist.Api/Hosting/HoistServiceCollectionExtensions.cs
+      - src/Hoist.Api/Hosting/HoistApplicationBuilderExtensions.cs
+    tests: [tests/Hoist.Tests/Contract/TestAuthEndpoints.cs, tests/Hoist.Tests/Contract/TestHoistHosting.cs]
+    hoistCoreSources:
+      - src/main/groovy/io/xh/hoist/HoistFilter.groovy
+      - src/main/groovy/io/xh/hoist/security/**
+      - grails-app/controllers/io/xh/hoist/HoistInterceptor.groovy
+      - grails-app/services/io/xh/hoist/user/IdentityService.groovy
+      - src/main/groovy/io/xh/hoist/user/**
+    hoistReactSources: [core/HoistAuthModel.ts, svc/IdentityService.ts, appcontainer/login/LoginPanelModel.ts]
+    docs: [docs/api/auth.md]
+
+  roles:
+    status: ported
+    stage: 2
+    dotnet: [src/Hoist.Core/Services/DefaultRoleService.cs, src/Hoist.Infra/Database/RoleRepository.cs]
+    tests: [tests/Hoist.Tests/Unit/TestRoleService.cs]
+    hoistCoreSources:
+      - src/main/groovy/io/xh/hoist/role/**
+      - grails-app/services/io/xh/hoist/role/**
+      - grails-app/domain/io/xh/hoist/role/**
+    docs: [docs/api/roles.md]
+
+  environment:
+    status: ported
+    stage: 3
+    dotnet: [src/Hoist.Core/Services/EnvironmentService.cs, src/Hoist.Core/Services/AlertBannerService.cs, src/Hoist.Infra/Database/DatabaseInfo.cs, src/Hoist.Core/Utils/TimeZones.cs]
+    tests: [tests/Hoist.Tests/Contract/TestEnvironmentEndpoints.cs]
+    endpoints: [xh/environment, xh/environmentPoll]
+    hoistCoreSources:
+      - grails-app/services/io/xh/hoist/environment/EnvironmentService.groovy
+      - grails-app/services/io/xh/hoist/alertbanner/AlertBannerService.groovy
+      - src/main/groovy/io/xh/hoist/AppEnvironment.groovy
+      - src/main/groovy/io/xh/hoist/environment/**
+      - src/main/groovy/io/xh/hoist/alertbanner/**
+    hoistReactSources: [svc/EnvironmentService.ts, svc/AlertBannerService.ts]
+    docs: [docs/api/environment.md]
+
+  prefs:
+    status: ported
+    stage: 3
+    dotnet: [src/Hoist.Core/Services/PrefService.cs, src/Hoist.Infra/Database/PrefRepository.cs]
+    tests: [tests/Hoist.Tests/Contract/TestPrefEndpoints.cs]
+    endpoints: [xh/getPrefs, xh/setPrefs, xh/unsetPrefs, xh/clearUserState]
+    hoistCoreSources:
+      - grails-app/services/io/xh/hoist/pref/PrefService.groovy
+      - grails-app/domain/io/xh/hoist/pref/**
+      - src/main/groovy/io/xh/hoist/pref/**
+    hoistReactSources: [svc/PrefService.ts]
+    docs: [docs/api/prefs.md]
+
+  tracking:
+    status: ported
+    stage: 4
+    dotnet: [src/Hoist.Core/Services/TrackService.cs, src/Hoist.Core/Utils/StringUtils.cs, src/Hoist.Infra/Database/TrackLogRepository.cs, src/Hoist.Api/Security/HttpTrackRequestInfo.cs]
+    tests: [tests/Hoist.Tests/Contract/TestTrackEndpoints.cs, tests/Hoist.Tests/Unit/TestTrackHelpers.cs]
+    endpoints: [xh/track, xh/recordMetrics (stub), xh/submitSpans (stub)]
+    hoistCoreSources:
+      - grails-app/services/io/xh/hoist/track/**
+      - src/main/groovy/io/xh/hoist/track/**
+      - grails-app/domain/io/xh/hoist/track/**
+      - src/main/groovy/io/xh/hoist/browser/**
+      - src/main/groovy/io/xh/hoist/util/StringUtils.groovy
+      - src/main/groovy/io/xh/hoist/util/RateMonitor.groovy
+    hoistReactSources: [svc/TrackService.ts, core/ExceptionHandler.ts, appcontainer/FeedbackDialogModel.ts]
+    docs: [docs/api/tracking.md]
+
+  jsonblob:
+    status: ported
+    stage: 5
+    dotnet: [src/Hoist.Core/Services/JsonBlobService.cs, src/Hoist.Infra/Database/JsonBlobRepository.cs]
+    tests: [tests/Hoist.Tests/Contract/TestJsonBlobEndpoints.cs]
+    endpoints: [xh/getJsonBlob, xh/findJsonBlob, xh/listJsonBlobs, xh/createJsonBlob, xh/updateJsonBlob, xh/createOrUpdateJsonBlob, xh/archiveJsonBlob]
+    hoistCoreSources:
+      - grails-app/services/io/xh/hoist/jsonblob/**
+      - grails-app/domain/io/xh/hoist/jsonblob/**
+      - src/main/groovy/io/xh/hoist/jsonblob/**
+    hoistReactSources: [svc/JsonBlobService.ts]
+    docs: [docs/api/jsonblob.md]
+
+  views:
+    status: ported
+    stage: 5
+    dotnet: [src/Hoist.Core/Services/ViewService.cs, src/Hoist.Api/Controllers/XhViewController.cs]
+    tests: [tests/Hoist.Tests/Contract/TestViewEndpoints.cs]
+    endpoints: [xhView/*]
+    hoistCoreSources:
+      - grails-app/controllers/io/xh/hoist/impl/XhViewController.groovy
+      - grails-app/services/io/xh/hoist/view/**
+    hoistReactSources: [cmp/viewmanager/**]
+    docs: [docs/api/views.md]
+
+  impersonation:
+    status: ported
+    stage: 6
+    dotnet: [src/Hoist.Core/Services/IdentityService.cs, src/Hoist.Core/Interfaces/UserInterfaces.cs, src/Hoist.Api/Controllers/XhController.cs]
+    tests: [tests/Hoist.Tests/Contract/TestImpersonationEndpoints.cs, tests/Hoist.Tests/Contract/TestHoistHosting.cs]
+    endpoints: [xh/impersonationTargets, xh/impersonate, xh/endImpersonate, xh/getTimeZoneOffset, xh/echoHeaders]
+    hoistCoreSources:
+      - grails-app/services/io/xh/hoist/user/IdentityService.groovy
+      - src/main/groovy/io/xh/hoist/user/BaseUserService.groovy
+    docs: [docs/api/auth.md]
+
+  admin:
+    status: ported
+    stage: 7
+    dotnet:
+      - src/Hoist.Api/Controllers/Admin/**
+      - src/Hoist.Core/Services/RoleAdminService.cs
+      - src/Hoist.Core/Services/TrackLogAdminService.cs
+      - src/Hoist.Core/Filters/HoistFilter.cs
+    tests: [tests/Hoist.Tests/Contract/TestRestAdminEndpoints.cs, tests/Hoist.Tests/Contract/TestRoleUserAdminEndpoints.cs, tests/Hoist.Tests/Contract/TestTrackLogAdminEndpoints.cs]
+    endpoints: [rest/configAdmin, rest/preferenceAdmin, rest/userPreferenceAdmin, rest/jsonBlobAdmin, roleAdmin/*, userAdmin/*, trackLogAdmin/*, alertBannerAdmin/*]
+    hoistCoreSources:
+      - grails-app/controllers/io/xh/hoist/RestController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/AdminRestController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/ConfigAdminController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/PreferenceAdminController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/UserPreferenceAdminController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/JsonBlobAdminController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/RoleAdminController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/UserAdminController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/TrackLogAdminController.groovy
+      - grails-app/controllers/io/xh/hoist/admin/AlertBannerAdminController.groovy
+      - grails-app/services/io/xh/hoist/track/TrackLogAdminService.groovy
+      - grails-app/services/io/xh/hoist/role/provided/DefaultRoleAdminService.groovy
+      - grails-app/services/io/xh/hoist/role/provided/DefaultRoleUpdateService.groovy
+      - src/main/groovy/io/xh/hoist/data/filter/**
+    hoistReactSources: [admin/**, desktop/cmp/rest/**]
+    docs: [docs/api/admin.md]
+
+# Areas intentionally not ported. Diffs touching only these paths need no action.
+skipped:
+  - area: clustering
+    paths: [grails-app/services/io/xh/hoist/cluster/**, src/main/groovy/io/xh/hoist/cluster/**, grails-app/controllers/io/xh/hoist/admin/cluster/**]
+  - area: websockets
+    paths: [src/main/groovy/io/xh/hoist/websocket/**, grails-app/services/io/xh/hoist/websocket/**, grails-app/controllers/io/xh/hoist/admin/ClientAdminController.groovy]
+  - area: metrics
+    paths: [grails-app/services/io/xh/hoist/telemetry/metric/**, src/main/groovy/io/xh/hoist/telemetry/metric/**]
+  - area: tracing
+    paths: [grails-app/services/io/xh/hoist/telemetry/trace/**, src/main/groovy/io/xh/hoist/telemetry/trace/**]
+  - area: monitoring
+    paths: [grails-app/services/io/xh/hoist/monitor/**, grails-app/domain/io/xh/hoist/monitor/**, grails-app/controllers/io/xh/hoist/admin/Monitor*, src/main/groovy/io/xh/hoist/monitor/**, src/main/groovy/io/xh/hoist/AdminStats.groovy]
+  - area: logging
+    paths: [grails-app/services/io/xh/hoist/log/**, grails-app/domain/io/xh/hoist/log/**, src/main/groovy/io/xh/hoist/log/**]
+  - area: email
+    paths: [grails-app/services/io/xh/hoist/email/**]
+  - area: ldap-entra-directory
+    paths: [grails-app/services/io/xh/hoist/ldap/**, grails-app/services/io/xh/hoist/entra/**, src/main/groovy/io/xh/hoist/entra/**, src/main/groovy/io/xh/hoist/directory/**]
+  - area: export-proxy-search-diff
+    paths: [grails-app/services/io/xh/hoist/export/**, grails-app/controllers/io/xh/hoist/impl/ProxyImplController.groovy, grails-app/controllers/io/xh/hoist/admin/JsonSearchController.groovy, grails-app/controllers/io/xh/hoist/admin/*DiffAdminController.groovy]
+  - area: admin-server-stats
+    paths: [grails-app/services/io/xh/hoist/admin/**, src/main/groovy/io/xh/hoist/admin/**, grails-app/services/io/xh/hoist/http/**, src/main/groovy/io/xh/hoist/http/**]
+  - area: build-mcp-docs
+    paths: [mcp/**, build.gradle, gradle/**, gradle.properties, settings.gradle, .github/**, context7.json, CHANGELOG.md, README.md, AGENTS.md, CLAUDE.md, SECURITY.md]
+  # hoist-core's reference docs: read the ones for affected components, but a docs-only change needs no port change.
+  - area: hoist-core-docs
+    paths: [docs/**]

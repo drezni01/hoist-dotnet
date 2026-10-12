@@ -1,0 +1,34 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- Versioning: VERSION holds major.minor. CI passes -p:Version=major.minor.<run number>; local packs are major.minor.0-local. -->
+  <PropertyGroup>
+    <HoistVersionBase>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)VERSION').Trim())</HoistVersionBase>
+    <VersionPrefix>$(HoistVersionBase).0</VersionPrefix>
+    <VersionSuffix Condition="'$(GITHUB_ACTIONS)' != 'true'">local</VersionSuffix>
+  </PropertyGroup>
+
+  <!-- NuGet package metadata, used by the packable src projects. -->
+  <PropertyGroup>
+    <Authors>drezni01</Authors>
+    <Copyright>Copyright 2026 SHARP STRATEGY, INC</Copyright>
+    <RepositoryUrl>https://github.com/drezni01/hoist-dotnet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>hoist;hoist-core;hoist-react;hoist-dotnet</PackageTags>
+    <DebugType>embedded</DebugType>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' != 'false'">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)NOTICE" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+</Project>

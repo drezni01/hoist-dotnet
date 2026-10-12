@@ -1,0 +1,7 @@
+<!-- Hoist.Core's package references. Also imported by Hoist.Api, so they become dependencies of the single HoistDotnet package. -->
+<Project>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,42 @@
+{
+  "xhActivityTrackingConfig": {
+    "enabled": true,
+    "logData": null,
+    "maxDataLength": 2000,
+    "maxElapsedMins": 2,
+    "maxElapsedMinsByCategory": {},
+    "maxEntriesPerMin": 1000,
+    "levels": [ { "username": "*", "category": "*", "severity": "INFO" } ],
+    "clientHealthReport": { "intervalMins": -1 },
+    "maxRows": { "default": 10000, "limit": 25000, "options": [ 1000 ] }
+  },
+  "xhAlertBannerConfig": { "enabled": true },
+  "xhAppInstances": [],
+  "xhAppTimeZone": "UTC",
+  "xhAutoRefreshIntervals": null,
+  "xhChangelogConfig": { "enabled": true, "excludedVersions": [], "excludedCategories": [], "limitToRoles": [] },
+  "xhEmailSupport": "none",
+  "xhEnableImpersonation": false,
+  "xhEnableLogViewer": true,
+  "xhEnableMonitoring": true,
+  "xhExportConfig": { "streamingCellThreshold": 100000, "toastCellThreshold": 3000 },
+  "xhFlags": null,
+  "xhIdleConfig": { "timeout": 120, "appTimeouts": {} },
+  "xhMemoryMonitoringConfig": {
+    "enabled": true,
+    "snapshotInterval": 60,
+    "maxSnapshots": 1440,
+    "heapDumpDir": null,
+    "preservePastInstances": true,
+    "maxPastInstances": 10,
+    "writeToLog": true
+  },
+  "xhTraceConfig": {
+    "enabled": false,
+    "sampleRate": 1.0,
+    "sampleRules": [],
+    "otlpEnabled": false,
+    "otlpConfig": {},
+    "jdbcTracingEnabled": false
+  }
+}

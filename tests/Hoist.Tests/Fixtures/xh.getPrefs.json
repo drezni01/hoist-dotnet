@@ -1,0 +1,8 @@
+{
+  "xhAutoRefreshEnabled": { "type": "bool", "value": true, "defaultValue": true, "isSet": false },
+  "xhIdleDetectionDisabled": { "type": "bool", "value": false, "defaultValue": false, "isSet": false },
+  "xhLastReadChangelog": { "type": "string", "value": "0.0.0", "defaultValue": "0.0.0", "isSet": false },
+  "xhShowVersionBar": { "type": "string", "value": "auto", "defaultValue": "auto", "isSet": false },
+  "xhSizingMode": { "type": "json", "value": {}, "defaultValue": {}, "isSet": false },
+  "xhTheme": { "type": "string", "value": "system", "defaultValue": "system", "isSet": false }
+}

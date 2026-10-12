@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Shipped inside the HoistDotnet package built from Hoist.Api. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <Import Project="Hoist.Core.Packages.props" />
+
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\BuiltIn\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hoist.Tests" />
+  </ItemGroup>
+
+</Project>

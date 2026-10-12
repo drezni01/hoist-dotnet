@@ -1,0 +1,98 @@
+name: CI
+
+# PRs into main: build and test.
+# Pushes to main: build, test, then pack the single HoistDotnet package (from Hoist.Api,
+# bundling Hoist.Core and Hoist.Infra), push it to nuget.org and tag a GitHub release.
+# Publishes with nuget.org Trusted Publishing (no API key). Needs a nuget.org trusted
+# publishing policy for this repo and workflow file (ci.yml), and the repo secret
+# NUGET_USER holding the nuget.org profile name.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # ── Build and test ─────────────────────────────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Hoist.sln
+
+      - name: Build
+        run: dotnet build Hoist.sln -c Release --no-restore
+
+      # LiveDb tests self-skip without a MySQL connection string.
+      - name: Test
+        run: dotnet test Hoist.sln -c Release --no-build --logger trx --results-directory TestResults
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: TestResults
+
+  # ── Pack, publish and release (main only) ──────────────────────────────────
+  release:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Compute version
+        id: ver
+        run: |
+          VERSION="$(tr -d '[:space:]' < VERSION).${{ github.run_number }}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Pack
+        run: dotnet pack Hoist.sln -c Release -o nupkgs -p:Version=${{ steps.ver.outputs.version }}
+
+      # Trades the GitHub OIDC token for a nuget.org API key that is valid for one hour.
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to nuget.org
+        run: >
+          dotnet nuget push "nupkgs/*.nupkg"
+          --source https://api.nuget.org/v3/index.json
+          --api-key "${{ steps.login.outputs.NUGET_API_KEY }}"
+          --skip-duplicate
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: HoistDotnet ${{ steps.ver.outputs.tag }}
+          generate_release_notes: true
+          files: nupkgs/*.nupkg

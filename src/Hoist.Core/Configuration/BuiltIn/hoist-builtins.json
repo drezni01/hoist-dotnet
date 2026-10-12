@@ -1,0 +1,235 @@
+{
+  "_source": "hoist-core v42.1.0 - grails-app/init/io/xh/hoist/BootStrap.groovy (ensureRequiredConfigsCreated / ensureRequiredPrefsCreated) and the TypedConfigMap subclasses listed per typedClass. Field order matches the Groovy declaration order, which is the JSON output order.",
+  "typedClasses": {
+    "ActivityTrackingConfig": {
+      "source": "src/main/groovy/io/xh/hoist/track/ActivityTrackingConfig.groovy",
+      "fields": [
+        { "name": "enabled", "type": "bool", "default": true },
+        { "name": "logData", "type": "any", "default": false },
+        { "name": "maxDataLength", "type": "int", "default": 2000 },
+        { "name": "maxElapsedMins", "type": "int", "default": 2 },
+        { "name": "maxElapsedMinsByCategory", "type": "map", "default": {} },
+        { "name": "maxEntriesPerMin", "type": "long", "default": 1000 },
+        { "name": "levels", "type": "list", "itemClass": "TrackLogLevel", "default": [ { "username": "*", "category": "*", "severity": "INFO" } ] },
+        { "name": "clientHealthReport", "type": "object", "class": "ClientHealthReport", "default": {} },
+        { "name": "maxRows", "type": "object", "class": "MaxRows", "default": {} }
+      ]
+    },
+    "TrackLogLevel": {
+      "source": "src/main/groovy/io/xh/hoist/track/ActivityTrackingConfig.groovy#TrackLogLevel",
+      "fields": [
+        { "name": "username", "type": "string", "default": "*" },
+        { "name": "category", "type": "string", "default": "*" },
+        { "name": "severity", "type": "string", "default": "INFO" }
+      ]
+    },
+    "ClientHealthReport": {
+      "source": "src/main/groovy/io/xh/hoist/track/ActivityTrackingConfig.groovy#ClientHealthReport",
+      "fields": [
+        { "name": "intervalMins", "type": "int", "default": -1 }
+      ]
+    },
+    "MaxRows": {
+      "source": "src/main/groovy/io/xh/hoist/track/ActivityTrackingConfig.groovy#MaxRows (field defaultValue is read/written as 'default')",
+      "fields": [
+        { "name": "default", "aliases": [ "defaultValue" ], "type": "int", "default": 10000 },
+        { "name": "limit", "type": "int", "default": 25000 },
+        { "name": "options", "type": "list", "default": [ 1000, 5000, 10000, 25000 ] }
+      ]
+    },
+    "AlertBannerConfig": {
+      "source": "src/main/groovy/io/xh/hoist/alertbanner/AlertBannerConfig.groovy",
+      "fields": [
+        { "name": "enabled", "type": "bool", "default": true }
+      ]
+    },
+    "ChangelogConfig": {
+      "source": "src/main/groovy/io/xh/hoist/config/ChangelogConfig.groovy",
+      "fields": [
+        { "name": "enabled", "type": "bool", "default": true },
+        { "name": "excludedVersions", "type": "list", "default": [] },
+        { "name": "excludedCategories", "type": "list", "default": [] },
+        { "name": "limitToRoles", "type": "list", "default": [] }
+      ]
+    },
+    "ClientErrorConfig": {
+      "source": "src/main/groovy/io/xh/hoist/track/ClientErrorConfig.groovy",
+      "fields": [
+        { "name": "intervalMins", "type": "int", "default": 2 }
+      ]
+    },
+    "ConnPoolMonitoringConfig": {
+      "source": "src/main/groovy/io/xh/hoist/admin/ConnPoolMonitoringConfig.groovy",
+      "fields": [
+        { "name": "enabled", "type": "bool", "default": true },
+        { "name": "snapshotInterval", "type": "int", "default": 60 },
+        { "name": "maxSnapshots", "type": "int", "default": 1440 },
+        { "name": "writeToLog", "type": "bool", "default": false }
+      ]
+    },
+    "EntraIdConfig": {
+      "source": "src/main/groovy/io/xh/hoist/entra/EntraIdConfig.groovy",
+      "fields": [
+        { "name": "enabled", "type": "bool", "default": false },
+        { "name": "usernameAttribute", "type": "string", "default": "userPrincipalName" },
+        { "name": "stripUsernameDomain", "type": "bool", "default": false },
+        { "name": "timeoutMs", "type": "long", "default": 10000 },
+        { "name": "cacheExpireSecs", "type": "int", "default": 300 }
+      ]
+    },
+    "EnvPollConfig": {
+      "source": "src/main/groovy/io/xh/hoist/environment/EnvPollConfig.groovy",
+      "fields": [
+        { "name": "interval", "type": "int", "default": 10 },
+        { "name": "onVersionChange", "type": "string", "default": "promptReload" }
+      ]
+    },
+    "ExportConfig": {
+      "source": "src/main/groovy/io/xh/hoist/export/ExportConfig.groovy",
+      "fields": [
+        { "name": "streamingCellThreshold", "type": "int", "default": 100000 },
+        { "name": "toastCellThreshold", "type": "int", "default": 3000 }
+      ]
+    },
+    "IdleConfig": {
+      "source": "src/main/groovy/io/xh/hoist/config/IdleConfig.groovy",
+      "fields": [
+        { "name": "timeout", "type": "int", "default": 120 },
+        { "name": "appTimeouts", "type": "map", "default": {} }
+      ]
+    },
+    "JsonBlobConfig": {
+      "source": "src/main/groovy/io/xh/hoist/jsonblob/JsonBlobConfig.groovy",
+      "fields": [
+        { "name": "globalWriteRoles", "type": "map", "default": { "*": [ "HOIST_ADMIN" ] } }
+      ]
+    },
+    "LdapConfig": {
+      "source": "src/main/groovy/io/xh/hoist/ldap/LdapConfig.groovy",
+      "fields": [
+        { "name": "enabled", "type": "bool", "default": false },
+        { "name": "timeoutMs", "type": "long", "default": 60000 },
+        { "name": "cacheExpireSecs", "type": "int", "default": 300 },
+        { "name": "useMatchingRuleInChain", "type": "bool", "default": false },
+        { "name": "skipTlsCertVerification", "type": "bool", "default": false },
+        { "name": "usernameAttribute", "type": "string", "default": "samaccountname" },
+        { "name": "servers", "type": "list", "itemClass": "LdapServerOptions", "default": [ {} ] }
+      ]
+    },
+    "LdapServerOptions": {
+      "source": "src/main/groovy/io/xh/hoist/ldap/LdapConfig.groovy#LdapServerOptions",
+      "fields": [
+        { "name": "host", "type": "string", "default": "" },
+        { "name": "baseUserDn", "type": "string", "default": "" },
+        { "name": "baseGroupDn", "type": "string", "default": "" }
+      ]
+    },
+    "LogArchiveConfig": {
+      "source": "src/main/groovy/io/xh/hoist/log/LogArchiveConfig.groovy",
+      "fields": [
+        { "name": "archiveAfterDays", "type": "int", "default": 30 },
+        { "name": "archiveFolder", "type": "string", "default": "archive" }
+      ]
+    },
+    "MemoryMonitoringConfig": {
+      "source": "src/main/groovy/io/xh/hoist/admin/MemoryMonitoringConfig.groovy",
+      "fields": [
+        { "name": "enabled", "type": "bool", "default": true },
+        { "name": "snapshotInterval", "type": "int", "default": 60 },
+        { "name": "maxSnapshots", "type": "int", "default": 1440 },
+        { "name": "heapDumpDir", "type": "string", "default": null },
+        { "name": "preservePastInstances", "type": "bool", "default": true },
+        { "name": "maxPastInstances", "type": "int", "default": 10 },
+        { "name": "writeToLog", "type": "bool", "default": true }
+      ]
+    },
+    "MonitorConfig": {
+      "source": "src/main/groovy/io/xh/hoist/monitor/MonitorConfig.groovy",
+      "fields": [
+        { "name": "monitorRefreshMins", "type": "int", "default": 10 },
+        { "name": "monitorStartupDelayMins", "type": "int", "default": 1 },
+        { "name": "monitorRepeatNotifyMins", "type": "int", "default": 60 },
+        { "name": "failNotifyThreshold", "type": "int", "default": 2 },
+        { "name": "warnNotifyThreshold", "type": "int", "default": 5 },
+        { "name": "monitorTimeoutSecs", "type": "int", "default": 15 },
+        { "name": "writeToMonitorLog", "type": "bool", "default": true }
+      ]
+    },
+    "MetricsConfig": {
+      "source": "src/main/groovy/io/xh/hoist/telemetry/metric/MetricsConfig.groovy",
+      "fields": [
+        { "name": "prometheusEnabled", "type": "bool", "default": false },
+        { "name": "prometheusConfig", "type": "map", "default": {} },
+        { "name": "otlpEnabled", "type": "bool", "default": false },
+        { "name": "otlpConfig", "type": "map", "default": {} }
+      ]
+    },
+    "TraceConfig": {
+      "source": "src/main/groovy/io/xh/hoist/telemetry/trace/TraceConfig.groovy",
+      "fields": [
+        { "name": "enabled", "type": "bool", "default": false },
+        { "name": "sampleRate", "type": "double", "default": 1.0 },
+        { "name": "sampleRules", "type": "list", "default": [] },
+        { "name": "otlpEnabled", "type": "bool", "default": false },
+        { "name": "otlpConfig", "type": "map", "default": {} },
+        { "name": "jdbcTracingEnabled", "type": "bool", "default": false }
+      ]
+    },
+    "WebSocketConfig": {
+      "source": "src/main/groovy/io/xh/hoist/websocket/WebSocketConfig.groovy",
+      "fields": [
+        { "name": "sendTimeLimitMs", "type": "int", "default": 1000 },
+        { "name": "bufferSizeLimitBytes", "type": "int", "default": 1000000 }
+      ]
+    }
+  },
+  "configs": [
+    { "name": "xhActivityTrackingConfig", "valueType": "json", "typedClass": "ActivityTrackingConfig", "clientVisible": true, "groupName": "xh.io", "note": "Configures built-in activity tracking via `TrackService`, including which users and categories are logged at each severity, limits on entry volume and data size, and client health reporting." },
+    { "name": "xhAlertBannerConfig", "valueType": "json", "typedClass": "AlertBannerConfig", "clientVisible": true, "groupName": "xh.io", "note": "Configures the app-wide alert banner. Set `enabled` to `true` to make the feature available, then compose and activate banners from the Admin Console. Clients pick up changes on the `xhEnvPollConfig.interval`." },
+    { "name": "xhAppInstances", "valueType": "json", "defaultValue": [], "clientVisible": true, "groupName": "xh.io", "note": "List of root URLs for this app's deployments in other environments. Offered as remote targets by the Admin Console's \"Compare w/ Remote\" tools." },
+    { "name": "xhAppTimeZone", "valueType": "string", "defaultValue": "UTC", "clientVisible": true, "groupName": "xh.io", "note": "Official time zone of the application - typically that of the head office - as a Java TimeZone ID. Used to parse and format business dates that must read the same at every location." },
+    { "name": "xhAutoRefreshIntervals", "valueType": "json", "defaultValue": { "app": -1 }, "clientVisible": true, "groupName": "xh.io", "note": "Map of client app code to the interval, in seconds, on which that app's `AutoRefreshService` fires. Use `-1` to disable. Users must also have the `xhAutoRefreshEnabled` preference set to `true`." },
+    { "name": "xhChangelogConfig", "valueType": "json", "typedClass": "ChangelogConfig", "clientVisible": true, "groupName": "xh.io", "note": "Configures the built-in changelog (release notes). Disable the feature entirely, exclude particular versions or categories of change, or limit visibility to users with selected roles." },
+    { "name": "xhClientErrorConfig", "valueType": "json", "typedClass": "ClientErrorConfig", "groupName": "xh.io", "note": "Configures handling of client error reports. Reports are queued as received and processed every `intervalMins`." },
+    { "name": "xhConnPoolMonitoringConfig", "valueType": "json", "typedClass": "ConnPoolMonitoringConfig", "groupName": "xh.io", "note": "Configures built-in monitoring of the JDBC connection pool, including how often to snapshot pool stats and how many snapshots to retain." },
+    { "name": "xhEmailDefaultDomain", "valueType": "string", "defaultValue": "example.com", "groupName": "xh.io", "note": "Domain appended by `EmailService` when an unqualified username is given as a sender or recipient." },
+    { "name": "xhEmailDefaultSender", "valueType": "string", "defaultValue": "support@example.com", "groupName": "xh.io", "note": "Sender address used by `EmailService` when none is specified." },
+    { "name": "xhEmailFilter", "valueType": "string", "defaultValue": "none", "groupName": "xh.io", "note": "Comma-separated list of the only addresses `EmailService` may send to, for dev and test environments. Mail to any other address is quietly dropped. Set to `none` to send to all recipients." },
+    { "name": "xhEmailOverride", "valueType": "string", "defaultValue": "none", "groupName": "xh.io", "note": "Single address to which `EmailService` redirects all mail, regardless of the intended recipients. Use in dev and test environments to exercise real sending without reaching end users. Set to `none` to disable." },
+    { "name": "xhEmailSupport", "valueType": "string", "defaultValue": "none", "clientVisible": true, "groupName": "xh.io", "note": "Address that receives user feedback and client error reports, or `none` to disable those emails." },
+    { "name": "xhEnableImpersonation", "valueType": "bool", "defaultValue": false, "clientVisible": true, "groupName": "xh.io", "note": "Enables identity impersonation by authorized users." },
+    { "name": "xhEnableLogViewer", "valueType": "bool", "defaultValue": true, "clientVisible": true, "groupName": "xh.io", "note": "Enables the Admin Console log viewer and its server-side endpoints." },
+    { "name": "xhEnableMonitoring", "valueType": "bool", "defaultValue": true, "clientVisible": true, "groupName": "xh.io", "note": "Enables the Admin Console Monitors tab and the server-side jobs that run status monitors." },
+    { "name": "xhEntraIdConfig", "valueType": "json", "typedClass": "EntraIdConfig", "groupName": "xh.io", "note": "Configures `EntraIdService` for querying users and groups in Microsoft Entra ID via Microsoft Graph. Requires `xhEntraTenantId`, `xhEntraClientId`, and `xhEntraClientSecret`." },
+    { "name": "xhEntraTenantId", "valueType": "string", "defaultValue": "none", "groupName": "xh.io", "note": "Tenant ID (GUID) of the app's Microsoft Entra ID tenant, used by `EntraIdService` and any other code that works with the tenant. Relay to pre-auth clients for OAuth login via `AuthenticationService.getClientConfig()` where needed." },
+    { "name": "xhEntraClientId", "valueType": "string", "defaultValue": "none", "groupName": "xh.io", "note": "Client ID (GUID) of the app's Entra ID app registration, used by `EntraIdService` and any other code that works with the registration. Relay to pre-auth clients for OAuth login via `AuthenticationService.getClientConfig()` where needed." },
+    { "name": "xhEntraClientSecret", "valueType": "pwd", "defaultValue": "none", "groupName": "xh.io", "note": "Client secret for the Entra ID app registration used by `EntraIdService`." },
+    { "name": "xhEntraClientPfx", "valueType": "pwd", "defaultValue": "none", "groupName": "xh.io", "note": "Base64-encoded PKCS#12 (.pfx/.p12) bundle holding the certificate uploaded to the Entra ID app registration used by EntraIdService, its chain (if any), and its private key. Configure to authenticate with a certificate instead of a client secret. Typically provisioned per environment via an instance config / environment variable from a secret manager. Convert PEM material with `openssl pkcs12 -export -in cert.pem -inkey key.pem | base64`." },
+    { "name": "xhEntraClientPfxPassword", "valueType": "pwd", "defaultValue": "none", "groupName": "xh.io", "note": "Password for the xhEntraClientPfx PKCS#12 bundle. Leave unset for a passwordless bundle." },
+    { "name": "xhEnvPollConfig", "valueType": "json", "typedClass": "EnvPollConfig", "groupName": "xh.io", "note": "Configures how clients poll the server for version, instance, and auth changes.\n\n- `interval`: Seconds between polls, or `-1` to disable.\n- `onVersionChange`: Action taken when a new app version is available, one of:\n    - `forceReload`: Reload immediately. Use when a new server is incompatible with the deployed client.\n    - `promptReload`: Show a banner prompting users to reload when convenient.\n    - `silent`: Take no action." },
+    { "name": "xhExpectedServerTimeZone", "valueType": "string", "defaultValue": "*", "groupName": "xh.io", "note": "Time zone the server JVM is expected to run in, as a Java TimeZone ID. Checked once at startup: the server fails to start if the value is invalid or does not match the JVM's zone. Changing it does not affect a running server or the JVM's default zone. Set to `*` to skip the check." },
+    { "name": "xhExportConfig", "valueType": "json", "typedClass": "ExportConfig", "clientVisible": true, "groupName": "xh.io", "note": "Configures Excel export, including the cell-count thresholds above which the server streams the workbook and the client warns that the export may take a while." },
+    { "name": "xhFlags", "valueType": "json", "defaultValue": {}, "clientVisible": true, "groupName": "xh.io", "note": "Map of flags for experimental features." },
+    { "name": "xhIdleConfig", "valueType": "json", "typedClass": "IdleConfig", "clientVisible": true, "groupName": "xh.io", "note": "Configures when an idle client enters sleep mode, suspending background requests until the user reloads. `timeout` is minutes of inactivity, overridable per client app in `appTimeouts`. Use `-1` to disable." },
+    { "name": "xhJsonBlobConfig", "valueType": "json", "typedClass": "JsonBlobConfig", "groupName": "xh.io", "note": "Configures `JsonBlobService`. `globalWriteRoles` maps blob type (or `*` as fallback) to the roles permitted to create, modify, and archive global blobs - e.g. ViewManager global views." },
+    { "name": "xhLdapConfig", "valueType": "json", "typedClass": "LdapConfig", "groupName": "xh.io", "note": "Configures `LdapService` for querying users and groups from one or more LDAP servers. Requires `xhLdapUsername` and `xhLdapPassword` when enabled." },
+    { "name": "xhLdapUsername", "valueType": "string", "defaultValue": "none", "groupName": "xh.io", "note": "Distinguished name of the account `LdapService` binds as when querying, or `none` if LDAP is not in use." },
+    { "name": "xhLdapPassword", "valueType": "pwd", "defaultValue": "none", "groupName": "xh.io", "note": "Password for the `xhLdapUsername` account, or `none` if LDAP is not in use." },
+    { "name": "xhLogArchiveConfig", "valueType": "json", "typedClass": "LogArchiveConfig", "groupName": "xh.io", "note": "Configures automatic archiving of log files. Files older than `archiveAfterDays` are moved into zipped bundles within `archiveFolder`." },
+    { "name": "xhMemoryMonitoringConfig", "valueType": "json", "typedClass": "MemoryMonitoringConfig", "clientVisible": true, "groupName": "xh.io", "note": "Configures built-in monitoring of JVM memory and garbage collection, including snapshot frequency, retention, and where to write heap dumps requested from the Admin Console." },
+    { "name": "xhMonitorConfig", "valueType": "json", "typedClass": "MonitorConfig", "groupName": "xh.io", "note": "Configures server-side status monitors and their notifications. `warnNotifyThreshold` and `failNotifyThreshold` are the number of consecutive refresh cycles a monitor must spend in that status before alerting." },
+    { "name": "xhMonitorEmailRecipients", "valueType": "string", "defaultValue": "none", "groupName": "xh.io", "note": "Comma-separated addresses that receive status monitor alerts, or `none` to disable emailed alerts." },
+    { "name": "xhMetricsConfig", "valueType": "json", "typedClass": "MetricsConfig", "groupName": "xh.io", "note": "Configures export of observable metrics to Prometheus and OTLP endpoints. Select the metrics to export with `xhMetricsPublished`." },
+    { "name": "xhTraceConfig", "valueType": "json", "typedClass": "TraceConfig", "clientVisible": true, "groupName": "xh.io", "note": "Configures distributed tracing, including sampling rate and rules, OTLP export, and JDBC tracing." },
+    { "name": "xhMetricsPublished", "valueType": "json", "defaultValue": [], "groupName": "xh.io", "note": "List of metric names to include in Prometheus, OTLP, and other exports. An empty list exports nothing. Manage via the Publish and Unpublish actions on the Admin Console's Metrics tab rather than editing this list directly." },
+    { "name": "xhWebSocketConfig", "valueType": "json", "typedClass": "WebSocketConfig", "groupName": "xh.io", "note": "Configures the WebSocket sessions Hoist manages for connected clients, including send time and buffer size limits." }
+  ],
+  "prefs": [
+    { "name": "xhAutoRefreshEnabled", "type": "bool", "defaultValue": true, "groupName": "xh.io", "notes": "True to enable the client AutoRefreshService, which will trigger a refresh of client app data if/as specified by the xhAutoRefreshIntervals config. Note if disabled at the app level via config, this pref will have no effect." },
+    { "name": "xhIdleDetectionDisabled", "type": "bool", "defaultValue": false, "groupName": "xh.io", "notes": "Set to true prevent IdleService from suspending the application due to inactivity." },
+    { "name": "xhLastReadChangelog", "type": "string", "defaultValue": "0.0.0", "groupName": "xh.io", "notes": "The most recent changelog entry version viewed by the user - read/written by XH.changelogService." },
+    { "name": "xhShowVersionBar", "type": "string", "defaultValue": "auto", "groupName": "xh.io", "notes": "Control display of Hoist footer with app version info. Options are 'auto' (show in non-prod env, or always for admins), 'always', and 'never'." },
+    { "name": "xhSizingMode", "type": "json", "defaultValue": {}, "groupName": "xh.io", "notes": "Sizing mode used by Grid and any other responsive components. Keyed by platform: [desktop|mobile|tablet]." },
+    { "name": "xhTheme", "type": "string", "defaultValue": "system", "groupName": "xh.io", "notes": "Visual theme for the client application - \"light\", \"dark\", or \"system\"." }
+  ]
+}

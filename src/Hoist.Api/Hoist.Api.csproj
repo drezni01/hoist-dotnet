@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    Packs as the single HoistDotnet package. Hoist.Core.dll and Hoist.Infra.dll ship inside it,
+    and their package references are imported below so they become its dependencies.
+  -->
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <IsPackable>true</IsPackable>
+    <PackageId>HoistDotnet</PackageId>
+    <Description>HoistDotnet: the hoist-core server endpoints hoist-react apps need, as a plugin for a .NET host app (AddHoist, UseHoist, MapHoist).</Description>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeHoistProjectsInPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+
+  <Import Project="..\Hoist.Core\Hoist.Core.Packages.props" />
+  <Import Project="..\Hoist.Infra\Hoist.Infra.Packages.props" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hoist.Core\Hoist.Core.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Hoist.Infra\Hoist.Infra.csproj" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hoist.Tests" />
+  </ItemGroup>
+
+  <Target Name="IncludeHoistProjectsInPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
+    </ItemGroup>
+  </Target>
+
+</Project>
