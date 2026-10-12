@@ -94,7 +94,7 @@ namespace Hoist.Tests.Contract
             var target = await identity.CheckImpersonationAsync(new HoistUser("admin"), "bob");
             Assert.AreEqual("bob", target.Username);
 
-            var ex = await Assert.ThrowsExceptionAsync<Hoist.Core.Exceptions.HoistException>(() => identity.CheckImpersonationAsync(new HoistUser("carol"), "admin"));
+            var ex = await Assert.ThrowsExactlyAsync<Hoist.Core.Exceptions.HoistException>(() => identity.CheckImpersonationAsync(new HoistUser("carol"), "admin"));
             Assert.AreEqual("'carol' is not authorized to impersonate 'admin'", ex.Message);
         }
     }

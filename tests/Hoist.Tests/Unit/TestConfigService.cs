@@ -71,11 +71,11 @@ namespace Hoist.Tests.Unit
             using var ts = await TestServices.CreateAsync();
             var svc = ts.Get<ConfigService>();
 
-            var missing = await Assert.ThrowsExceptionAsync<Core.Exceptions.HoistException>(() => svc.GetStringAsync("nope"));
+            var missing = await Assert.ThrowsExactlyAsync<Core.Exceptions.HoistException>(() => svc.GetStringAsync("nope"));
             Assert.AreEqual("No config found with name: [nope]", missing.Message);
             Assert.AreEqual("fallback", await svc.GetStringAsync("nope", "fallback"));
 
-            var wrongType = await Assert.ThrowsExceptionAsync<Core.Exceptions.HoistException>(() => svc.GetIntAsync("xhAppTimeZone"));
+            var wrongType = await Assert.ThrowsExactlyAsync<Core.Exceptions.HoistException>(() => svc.GetIntAsync("xhAppTimeZone"));
             Assert.AreEqual("Unexpected type for config: [xhAppTimeZone] | config is string | expected int", wrongType.Message);
         }
 
@@ -143,9 +143,9 @@ namespace Hoist.Tests.Unit
         {
             using var ts = await TestServices.CreateAsync();
             var svc = ts.Get<ConfigService>();
-            await Assert.ThrowsExceptionAsync<Core.Exceptions.ValidationException>(() => svc.SetValueAsync("xhEnableImpersonation", "maybe", "admin"));
-            await Assert.ThrowsExceptionAsync<Core.Exceptions.ValidationException>(() => svc.SetValueAsync("xhFlags", "{not json", "admin"));
-            var typed = await Assert.ThrowsExceptionAsync<Core.Exceptions.ValidationException>(() => svc.SetValueAsync("xhAlertBannerConfig", "{\"enabled\":\"yes\"}", "admin"));
+            await Assert.ThrowsExactlyAsync<Core.Exceptions.ValidationException>(() => svc.SetValueAsync("xhEnableImpersonation", "maybe", "admin"));
+            await Assert.ThrowsExactlyAsync<Core.Exceptions.ValidationException>(() => svc.SetValueAsync("xhFlags", "{not json", "admin"));
+            var typed = await Assert.ThrowsExactlyAsync<Core.Exceptions.ValidationException>(() => svc.SetValueAsync("xhAlertBannerConfig", "{\"enabled\":\"yes\"}", "admin"));
             StringAssert.Contains(typed.Message, "Cannot apply value to AlertBannerConfig: Field 'enabled' on AlertBannerConfig expects Boolean but got String");
         }
 

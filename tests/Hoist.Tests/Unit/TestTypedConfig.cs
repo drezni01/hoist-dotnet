@@ -65,7 +65,7 @@ namespace Hoist.Tests.Unit
         [TestMethod]
         public void TestWrongTypeThrows()
         {
-            var ex = Assert.ThrowsException<ArgumentException>(() => registry.Resolve("AlertBannerConfig", JsonNode.Parse("""{"enabled":"yes"}""").AsObject()));
+            var ex = Assert.ThrowsExactly<ArgumentException>(() => registry.Resolve("AlertBannerConfig", JsonNode.Parse("""{"enabled":"yes"}""").AsObject()));
             Assert.AreEqual("Field 'enabled' on AlertBannerConfig expects Boolean but got String", ex.Message);
         }
 
@@ -74,7 +74,7 @@ namespace Hoist.Tests.Unit
         {
             var resolved = registry.Resolve("TraceConfig", JsonNode.Parse("""{"sampleRate":1}""").AsObject());
             Assert.AreEqual(1d, resolved["sampleRate"].GetValue<double>());
-            Assert.ThrowsException<ArgumentException>(() => registry.Resolve("AlertBannerConfig", JsonNode.Parse("""{"enabled":5}""").AsObject()));
+            Assert.ThrowsExactly<ArgumentException>(() => registry.Resolve("AlertBannerConfig", JsonNode.Parse("""{"enabled":5}""").AsObject()));
         }
 
         [TestMethod]

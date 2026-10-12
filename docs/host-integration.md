@@ -14,7 +14,7 @@ Add the `HoistDotnet` package from nuget.org to the host's API project. It needs
 <PackageReference Include="HoistDotnet" Version="0.1.*" />
 ```
 
-`HoistDotnet` contains `Hoist.Core`, `Hoist.Infra` and `Hoist.Api` ([decision 0006](decisions/0006-single-nuget-package.md)) and targets `net8.0`. Every push to hoist-dotnet's `main` publishes a new version (`.github/workflows/ci.yml`). The version is `VERSION` (major.minor) plus the workflow run number, e.g. `0.1.42`, and each release is tagged `v0.1.42`. Bump `VERSION` for a breaking change.
+`HoistDotnet` contains `Hoist.Core`, `Hoist.Infra` and `Hoist.Api` ([decision 0006](decisions/0006-single-nuget-package.md)) and targets `net10.0`. It uses EF Core 9, because the Pomelo MySQL provider has no EF Core 10 release yet ([decision 0007](decisions/0007-target-net10.md)). Every push to hoist-dotnet's `main` publishes a new version (`.github/workflows/ci.yml`). The version is `VERSION` (major.minor) plus the workflow run number, e.g. `0.1.42`, and each release is tagged `v0.1.42`. Bump `VERSION` for a breaking change.
 
 To work against a local checkout instead, reference `Hoist.Api`, `Hoist.Core` and `Hoist.Infra` as projects. Reference all three, because `Hoist.Api` references the other two privately.
 
