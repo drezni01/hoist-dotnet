@@ -62,7 +62,7 @@ components:
       - src/main/groovy/io/xh/hoist/configuration/ApplicationConfig.groovy
     dotnet: [src/Hoist.Infra/Database/**, src/Hoist.Core/Models/**]
     tests: [tests/Hoist.Tests/Schema/**, tests/Hoist.Tests/LiveDb/**, tests/Hoist.Tests/Unit/TestEntityCache.cs]
-    docs: [docs/schema/README.md, docs/decisions/0002-hoist-schema.md, docs/decisions/0003-validate-schema-at-startup.md, docs/decisions/0007-write-through-entity-cache.md]
+    docs: [docs/schema/README.md, docs/decisions/0002-hoist-schema.md, docs/decisions/0003-validate-schema-at-startup.md, docs/decisions/0008-write-through-entity-cache.md]
 
   config:
     status: ported

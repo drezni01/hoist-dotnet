@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Hoist.Tests.Unit
 {
     /// <summary>
-    /// The write-through caches over the xh_* repositories (docs/decisions/0007-write-through-entity-cache.md).
+    /// The write-through caches over the xh_* repositories (docs/decisions/0008-write-through-entity-cache.md).
     /// Queries are counted from EF's command log, so the tests see the SQL that actually ran.
     /// </summary>
     [TestClass]
@@ -112,7 +112,7 @@ namespace Hoist.Tests.Unit
             Assert.AreEqual("UTC", (await repo.FindByNameAsync("xhAppTimeZone")).Value);
 
             stale.Value = "Asia/Tokyo";
-            await Assert.ThrowsExceptionAsync<DbUpdateConcurrencyException>(() => repo.SaveAsync(stale));
+            await Assert.ThrowsExactlyAsync<DbUpdateConcurrencyException>(() => repo.SaveAsync(stale));
 
             var current = await repo.FindByNameAsync("xhAppTimeZone");
             Assert.AreEqual("Europe/Paris", current.Value);

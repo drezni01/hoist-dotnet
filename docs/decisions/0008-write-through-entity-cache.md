@@ -1,4 +1,4 @@
-# 0007 - Cache configs, prefs, roles and JsonBlobs in memory
+# 0008 - Cache configs, prefs, roles and JsonBlobs in memory
 
 - **Status:** Accepted
 - **Date:** 2026-10-18
