@@ -61,8 +61,8 @@ components:
       - grails-app/conf/application.groovy
       - src/main/groovy/io/xh/hoist/configuration/ApplicationConfig.groovy
     dotnet: [src/Hoist.Infra/Database/**, src/Hoist.Core/Models/**]
-    tests: [tests/Hoist.Tests/Schema/**, tests/Hoist.Tests/LiveDb/**]
-    docs: [docs/schema/README.md, docs/decisions/0002-hoist-schema.md, docs/decisions/0003-validate-schema-at-startup.md]
+    tests: [tests/Hoist.Tests/Schema/**, tests/Hoist.Tests/LiveDb/**, tests/Hoist.Tests/Unit/TestEntityCache.cs]
+    docs: [docs/schema/README.md, docs/decisions/0002-hoist-schema.md, docs/decisions/0003-validate-schema-at-startup.md, docs/decisions/0007-write-through-entity-cache.md]
 
   config:
     status: ported
@@ -75,6 +75,7 @@ components:
       - src/Hoist.Infra/Configuration/InstanceConfig.cs
       - src/Hoist.Infra/Security/JasyptEncryptor.cs
       - src/Hoist.Infra/Database/ConfigRepository.cs
+      - src/Hoist.Infra/Database/CachingConfigRepository.cs
     tests: [tests/Hoist.Tests/Unit/TestConfigService.cs, tests/Hoist.Tests/Unit/TestTypedConfig.cs, tests/Hoist.Tests/Unit/TestJasyptEncryptor.cs, tests/Hoist.Tests/Contract/TestConfigEndpoints.cs]
     hoistCoreSources:
       - grails-app/services/io/xh/hoist/config/ConfigService.groovy
@@ -111,7 +112,7 @@ components:
   roles:
     status: ported
     stage: 2
-    dotnet: [src/Hoist.Core/Services/DefaultRoleService.cs, src/Hoist.Infra/Database/RoleRepository.cs]
+    dotnet: [src/Hoist.Core/Services/DefaultRoleService.cs, src/Hoist.Infra/Database/RoleRepository.cs, src/Hoist.Infra/Database/CachingRoleRepository.cs]
     tests: [tests/Hoist.Tests/Unit/TestRoleService.cs]
     hoistCoreSources:
       - src/main/groovy/io/xh/hoist/role/**
@@ -137,7 +138,7 @@ components:
   prefs:
     status: ported
     stage: 3
-    dotnet: [src/Hoist.Core/Services/PrefService.cs, src/Hoist.Infra/Database/PrefRepository.cs]
+    dotnet: [src/Hoist.Core/Services/PrefService.cs, src/Hoist.Infra/Database/PrefRepository.cs, src/Hoist.Infra/Database/CachingPrefRepository.cs]
     tests: [tests/Hoist.Tests/Contract/TestPrefEndpoints.cs]
     endpoints: [xh/getPrefs, xh/setPrefs, xh/unsetPrefs, xh/clearUserState]
     hoistCoreSources:
@@ -166,7 +167,7 @@ components:
   jsonblob:
     status: ported
     stage: 5
-    dotnet: [src/Hoist.Core/Services/JsonBlobService.cs, src/Hoist.Infra/Database/JsonBlobRepository.cs]
+    dotnet: [src/Hoist.Core/Services/JsonBlobService.cs, src/Hoist.Infra/Database/JsonBlobRepository.cs, src/Hoist.Infra/Database/CachingJsonBlobRepository.cs]
     tests: [tests/Hoist.Tests/Contract/TestJsonBlobEndpoints.cs]
     endpoints: [xh/getJsonBlob, xh/findJsonBlob, xh/listJsonBlobs, xh/createJsonBlob, xh/updateJsonBlob, xh/createOrUpdateJsonBlob, xh/archiveJsonBlob]
     hoistCoreSources:

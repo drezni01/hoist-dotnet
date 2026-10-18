@@ -76,6 +76,14 @@ namespace Hoist.Core.Configuration
         public bool LogSql { get; set; }
 
         /// <summary>
+        /// Keep configs, preferences, roles and JsonBlobs in memory, writing through to the database, so reads
+        /// rarely query it. On by default. This instance must be the only writer: changes made by another
+        /// instance, or by a Grails app on the same schema, are not seen until this one restarts. Turn it off
+        /// when the schema has more than one writer.
+        /// </summary>
+        public bool CacheEntities { get; set; } = true;
+
+        /// <summary>
         /// Time zone the DATETIME columns are stored in. Hibernate wrote java.util.Date values in the JVM's
         /// local zone, so the default is the local zone of this machine.
         /// </summary>

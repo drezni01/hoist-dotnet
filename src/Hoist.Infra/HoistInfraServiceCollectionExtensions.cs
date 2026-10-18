@@ -41,15 +41,28 @@ namespace Hoist.Infra
             });
 
             services.AddSingleton<IHoistSchema, HoistSchema>();
-            services.AddSingleton<IConfigRepository, ConfigRepository>();
-            services.AddSingleton<IRoleRepository, RoleRepository>();
-            services.AddSingleton<IPrefRepository, PrefRepository>();
-            services.AddSingleton<IJsonBlobRepository, JsonBlobRepository>();
+            AddCachedRepository<IConfigRepository, ConfigRepository>(services, r => new CachingConfigRepository(r));
+            AddCachedRepository<IRoleRepository, RoleRepository>(services, r => new CachingRoleRepository(r));
+            AddCachedRepository<IPrefRepository, PrefRepository>(services, r => new CachingPrefRepository(r));
+            AddCachedRepository<IJsonBlobRepository, JsonBlobRepository>(services, r => new CachingJsonBlobRepository(r));
             services.AddSingleton<ITrackLogRepository, TrackLogRepository>();
             services.AddSingleton<IDatabaseInfo, DatabaseInfo>();
             services.AddSingleton<IInstanceConfig, InstanceConfig>();
             services.AddSingleton<IConfigEncryptor, JasyptEncryptor>();
             return services;
+        }
+
+        /// <summary>The EF repository, wrapped in its write-through cache unless Database.CacheEntities is off.</summary>
+        private static void AddCachedRepository<TInterface, TRepository>(IServiceCollection services, Func<TInterface, TInterface> cache)
+            where TInterface : class
+            where TRepository : class, TInterface
+        {
+            services.AddSingleton<TRepository>();
+            services.AddSingleton<TInterface>(sp =>
+            {
+                var repository = sp.GetRequiredService<TRepository>();
+                return sp.GetRequiredService<HoistOptions>().Database.CacheEntities ? cache(repository) : repository;
+            });
         }
 
         /// <summary>The routine Database.Command events, silenced unless LogSql. CommandError is kept.</summary>
